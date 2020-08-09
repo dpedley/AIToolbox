@@ -145,7 +145,7 @@ open class SVMModel
         for i in 0..<data.size {
             do {
                 let pointLabel = try data.getClass(i)
-                if let index = label.index(of: pointLabel) {
+                if let index = label.firstIndex(of: pointLabel) {
                     //  label already found
                     count[index] += 1
                 }
@@ -230,7 +230,7 @@ open class SVMModel
                 var weightedCost = [Double](repeating: Cost, count: classificationData.numClasses)
                 if let weightMods = weightModifiers {
                     for mod in weightMods {
-                        let index = classificationData.foundLabels.index(of: mod.classLabel)
+                        let index = classificationData.foundLabels.firstIndex(of: mod.classLabel)
                         if (index == nil) {
                             print("weight modifier label \(mod.classLabel) not found in data set")
                             continue
@@ -464,7 +464,9 @@ open class SVMModel
 #else
                         let j =  i + Int(arc4random()) % (classificationData.classCount[c] - i)
 #endif
-                        swap(&shuffledIndices[c][i], &shuffledIndices[c][j])
+                        let t = shuffledIndices[c][i]
+                        shuffledIndices[c][i] = shuffledIndices[c][j]
+                        shuffledIndices[c][j] = t
                     }
                 }
                 
@@ -545,7 +547,7 @@ open class SVMModel
     func binarySVCProbability(_ data: MLCombinedDataSet, positiveLabel: Int, costPositive: Double, costNegative: Double) -> (A: Double, B: Double)
     {
         //  Get a shuffled index set
-        var perm = data.getRandomIndexSet()
+        let perm = data.getRandomIndexSet()
         
         //  Create the array for the decision values
         var decisionValues = [Double](repeating: 0.0, count: data.size)

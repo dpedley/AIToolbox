@@ -112,7 +112,9 @@ extension MLDataSet {
             let j = Int(arc4random_uniform(UInt32(size - i))) + i
 #endif
             guard i != j else { continue }
-            swap(&shuffledArray[i], &shuffledArray[j])
+            let t = shuffledArray[i]
+            shuffledArray[i] = shuffledArray[j]
+            shuffledArray[j] = t
         }
         
         return shuffledArray
@@ -225,7 +227,7 @@ extension MLClassificationDataSet {
         //  Get the different data labels
         for index in 0..<size {
             let thisClass = try getClass(index)
-            let thisClassIndex = classificationData.foundLabels.index(of: thisClass)
+            let thisClassIndex = classificationData.foundLabels.firstIndex(of: thisClass)
             if let classIndex = thisClassIndex {
                 //  Class label found, increment count
                 classificationData.classCount[classIndex] += 1
